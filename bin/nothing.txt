@@ -1,0 +1,1 @@
+nothing (so git will push the 'bin' dir even though compiled app is on .gitignore)
