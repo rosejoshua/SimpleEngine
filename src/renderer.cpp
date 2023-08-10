@@ -10,9 +10,9 @@ Renderer::~Renderer()
   SDL_DestroyRenderer(sdlRenderer);
 }
 
-bool Renderer::init(bool vSync, SDL_Window* sdlWindow)
+bool Renderer::init(Settings *settings, SDL_Window* sdlWindow)
 {
-  if (vSync)
+  if (settings->getVSync())
   {
     sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   }

@@ -11,7 +11,7 @@
 set -u -e
 
 # Compile it and output to executable called 'app'
-clang++ src/*.cpp -I include/ -I/Library/Frameworks/SDL2.framework/Headers -F/Library/Frameworks -framework SDL2 -o bin/app
+clang++ src/*.cpp -I include/ -I/Library/Frameworks/SDL2.framework/Headers -I/Library/Frameworks/SDL2_image.framework/Headers -I/Library/Frameworks/SDL2_ttf.framework/Headers -F/Library/Frameworks -framework SDL2 -framework SDL2_image -framework SDL2_ttf -o bin/app
 
 # runs the app
 ./bin/app

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <settings.h>
 
  class Renderer
  {
@@ -10,7 +11,7 @@
     Renderer();
     ~Renderer();
 
-    bool init(bool vSync, SDL_Window* sdlWindow);
+    bool init(Settings *settings, SDL_Window* sdlWindow);
     void clear();
     SDL_Renderer* getSdlRendererPtr();
  };

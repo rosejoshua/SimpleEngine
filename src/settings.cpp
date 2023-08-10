@@ -1,8 +1,8 @@
 #include <settings.h>
 #include <iostream>
 #include <fstream>
-const int Settings::defaultResW = 640;
-const int Settings::defaultResH = 480;
+const int Settings::defaultResW = 1024;
+const int Settings::defaultResH = 768;
 const bool Settings::defaultFullScreen = false;
 const bool Settings::defaultVSync = false;
 Settings::Settings()

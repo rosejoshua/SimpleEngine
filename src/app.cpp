@@ -8,27 +8,44 @@
 
 #include <iostream>
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <window.h>
 #include <renderer.h>
+#include <controls_event_handler.h>
 
 int main(int argc, char const *argv[])
 {
-    int numMillisToThrottle = 6;
+    int numMillisToThrottle = 2;
     bool appIsRunning = true;
     Settings settings;
     Window window;
     window.init(&settings);
     Renderer renderer;
-    renderer.init(settings.getVSync(), window.getSdlWindowPtr());
+    renderer.init(&settings, window.getSdlWindowPtr());
+    ControlsEventHandler controlsEventHandler;
 
-    // SDL_Renderer *renderer = nullptr;
+    SDL_Texture *texture = IMG_LoadTexture(renderer.getSdlRendererPtr(), "../assets/sword.png");
 
-    SDL_Rect sdlRect;
-    sdlRect.w = settings.getResW()/30;
-    sdlRect.h = settings.getResH()/10;
-    sdlRect.x = settings.getResW()/2 - sdlRect.w/2;
-    sdlRect.y = settings.getResH()/2 - sdlRect.h/2;
-    int numPixelsToMovePerFrame = sdlRect.w/4;
+    SDL_Rect srcRect;
+    SDL_Rect destRect;
+    destRect.w = 62;
+    destRect.h = 300;
+    destRect.x = settings.getResW()/2 - destRect.w/2;
+    destRect.y = settings.getResH()/2 - destRect.h/2;
+    // sdlRect.w = settings.getResW()/30;
+    // sdlRect.h = settings.getResH()/10;
+    srcRect.w = 62;
+    srcRect.h = 300;
+    srcRect.x = 0;
+    srcRect.y = 0;
+
+    float angle = 30.0f; // set the angle.
+    SDL_Point rotateAxis;
+    rotateAxis.x = srcRect.w/2;
+    rotateAxis.y = srcRect.h;
+
+    int numPixelsToMovePerFrame = 1;
 
     bool upArrowDown = false;
     bool leftArrowDown = false;
@@ -37,145 +54,74 @@ int main(int argc, char const *argv[])
     
     Uint64 lastDrawTime = SDL_GetTicks64();
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cout << "SDL could not be initialized: " << SDL_GetError();
-    }
-    else
-    {
-        std::cout << "SDL video system is ready to go\n";
-    }
-
-    // Create an application window with the following settings:
-    // window = SDL_CreateWindow(
-    //     "An SDL2 window",        // window title
-    //     SDL_WINDOWPOS_UNDEFINED, // initial x position
-    //     SDL_WINDOWPOS_UNDEFINED, // initial y position
-    //     resW,                     // width, in pixels
-    //     resH,                     // height, in pixels
-    //     SDL_WINDOW_SHOWN         // flags - see below
-    // );
-
-    // Check that the window was successfully created
-    // if (window == NULL)
-    // {
-    //     // In the case that the window could not be made...
-    //     printf("Could not create window: %s\n", SDL_GetError());
-    //     return 1;
-    // }
-
-    
-    // if (renderer == NULL)
-    // {
-    //     // In the case that the renderer could not be made...
-    //     printf("Could not create renderer: %s\n", SDL_GetError());
-    //     return 1;
-    // }
+    if (SDL_Init(SDL_INIT_VIDEO) < 0){ std::cout << "SDL could not be initialized: " << SDL_GetError(); }
 
     //main game/app loop
     while (appIsRunning)
     {
         //slowing things down a little, you can delete this if you like
         while (SDL_GetTicks64() - lastDrawTime < numMillisToThrottle){}
-
         SDL_Event event;
+        SDL_Event *p_event = &event;
         while (SDL_PollEvent(&event))
         {
             // Handle each specific event
-            if (event.type == SDL_QUIT)
+            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+            {
+                controlsEventHandler.processEvent(p_event);
+            }
+            else if (event.type == SDL_QUIT)
             {
                 appIsRunning = false;
-            }
-            else if (event.type == SDL_KEYDOWN)
-            {
-                if (event.key.keysym.scancode == SDL_SCANCODE_UP)
-                {
-                upArrowDown = true;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-                {
-                leftArrowDown = true;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
-                {
-                downArrowDown = true;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-                {
-                rightArrowDown = true;
-                }
-            }
-            else if (event.type == SDL_KEYUP)
-            {
-                if (event.key.keysym.scancode == SDL_SCANCODE_UP)
-                {
-                upArrowDown = false;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-                {
-                leftArrowDown = false;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
-                {
-                downArrowDown = false;
-                }
-                else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-                {
-                rightArrowDown = false;
-                }
             }
         }
 
         //move rectangle
         if (upArrowDown)
         {
-            sdlRect.y -= numPixelsToMovePerFrame;
+            destRect.y -= numPixelsToMovePerFrame;
         }
         if (leftArrowDown)
         {
-            sdlRect.x -= numPixelsToMovePerFrame;
+            destRect.x -= numPixelsToMovePerFrame;
         }
         if (downArrowDown)
         {
-            sdlRect.y += numPixelsToMovePerFrame;
+            destRect.y += numPixelsToMovePerFrame;
         }
         if (rightArrowDown)
         {
-            sdlRect.x += numPixelsToMovePerFrame;
+            destRect.x += numPixelsToMovePerFrame;
         }
 
         //bounds checking and correction
-        if (sdlRect.x < 0)
+        if (destRect.x < 0)
         {
-            sdlRect.x = 0;
+            destRect.x = 0;
         }
-        else if (sdlRect.x + sdlRect.w - 1 >= settings.getResW())
+        else if (destRect.x + destRect.w - 1 >= settings.getResW())
         {
-            sdlRect.x = settings.getResW() - sdlRect.w;
+            destRect.x = settings.getResW() - destRect.w;
         }
-        if (sdlRect.y < 0)
+        if (destRect.y < 0)
         {
-            sdlRect.y = 0;
+            destRect.y = 0;
         }
-        else if (sdlRect.y + sdlRect.h - 1 >= settings.getResH())
+        else if (destRect.y + destRect.h - 1 >= settings.getResH())
         {
-            sdlRect.y = settings.getResH() - sdlRect.h;
+            destRect.y = settings.getResH() - destRect.h;
         }
+
+        angle += 2.0f;
+        if (angle>360.0)
+            angle = 0.0f;
 
         renderer.clear();
-
-        // SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        // SDL_RenderClear(renderer);
-
-        SDL_SetRenderDrawColor(renderer.getSdlRendererPtr(), 255, 105, 180, SDL_ALPHA_OPAQUE);
-        SDL_RenderFillRect(renderer.getSdlRendererPtr(), &sdlRect);
+        SDL_RenderCopyEx(renderer.getSdlRendererPtr(), texture, NULL, &destRect, angle, &rotateAxis, SDL_FLIP_NONE);
         SDL_RenderPresent(renderer.getSdlRendererPtr());
-        
         lastDrawTime = SDL_GetTicks64();
     }
 
-    // SDL_DestroyWindow(window);
-    //SDL_DestroyRenderer(renderer);
     std::cout << "exiting..." << std::endl;
     SDL_Quit();
     return 0;
