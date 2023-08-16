@@ -1,10 +1,5 @@
 // Author: Joshua Rose
-// Date Created: 9/11/22
-//
-// This is some starter code to get your project going. I found SDL setup on Mac to be needlessly frustrating so I hope this helps.
-// If you enjoy it please consider subscribing to my YouTube channel: @jrose.me 
-// 
-// I coded this and got it working on  MacOS Monterey 12.4, using SDL 2.24.0 and compiled with Clang++
+// Date Created: 
 
 #include <iostream>
 #include <SDL.h>
@@ -12,18 +7,18 @@
 #include <SDL_ttf.h>
 #include <window.h>
 #include <renderer.h>
-#include <controls_event_handler.h>
+#include <event_handler.h>
 
 int main(int argc, char const *argv[])
 {
-    int numMillisToThrottle = 2;
+    int numMillisToThrottle = 4;
     bool appIsRunning = true;
     Settings settings;
     Window window;
     window.init(&settings);
     Renderer renderer;
     renderer.init(&settings, window.getSdlWindowPtr());
-    ControlsEventHandler controlsEventHandler;
+    EventHandler eventHandler;
 
     SDL_Texture *texture = IMG_LoadTexture(renderer.getSdlRendererPtr(), "../assets/sword.png");
 
@@ -33,8 +28,7 @@ int main(int argc, char const *argv[])
     destRect.h = 300;
     destRect.x = settings.getResW()/2 - destRect.w/2;
     destRect.y = settings.getResH()/2 - destRect.h/2;
-    // sdlRect.w = settings.getResW()/30;
-    // sdlRect.h = settings.getResH()/10;
+
     srcRect.w = 62;
     srcRect.h = 300;
     srcRect.x = 0;
@@ -61,20 +55,7 @@ int main(int argc, char const *argv[])
     {
         //slowing things down a little, you can delete this if you like
         while (SDL_GetTicks64() - lastDrawTime < numMillisToThrottle){}
-        SDL_Event event;
-        SDL_Event *p_event = &event;
-        while (SDL_PollEvent(&event))
-        {
-            // Handle each specific event
-            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-            {
-                controlsEventHandler.processEvent(p_event);
-            }
-            else if (event.type == SDL_QUIT)
-            {
-                appIsRunning = false;
-            }
-        }
+        eventHandler.processEvents(&appIsRunning);
 
         //move rectangle
         if (upArrowDown)

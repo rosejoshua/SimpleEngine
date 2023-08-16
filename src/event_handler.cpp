@@ -1,10 +1,21 @@
-#include <controls_event_handler.h>
+#include <event_handler.h>
 
-void ControlsEventHandler::processEvent(SDL_Event *event)
+void EventHandler::processEvents(bool *appIsRunning)
 {
-  std::cout << "contols event detected: " << (event->type == SDL_KEYDOWN ? "keydown" : "keyup") << std::endl;
+  SDL_Event event;
+  while (SDL_PollEvent(&event))
+  {
+    if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+    {
+      std::cout << "controls event" << std::endl;
+    }
+    else if (event.type == SDL_QUIT)
+    {
+      std::cout << "quit event" << std::endl;
+      *appIsRunning = false;
+    }
+  }
 }
-
   // if (event.type == SDL_KEYDOWN)
   // {
   //     if (event.key.keysym.scancode == SDL_SCANCODE_UP)

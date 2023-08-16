@@ -3,10 +3,9 @@
 #include <iostream>
 #include <SDL.h>
 
-class ControlsEventHandler
+class EventHandler
 {
   private:
   public:
-  
-    void processEvent(SDL_Event *event);
+    void processEvents(bool *appIsRunning);
 };
