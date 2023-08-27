@@ -6,7 +6,7 @@
  class Renderer
  {
   private:
-    SDL_Renderer *sdlRenderer;
+    SDL_Renderer *pSdlRenderer;
   public:
     Renderer();
     ~Renderer();

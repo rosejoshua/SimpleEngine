@@ -4,7 +4,7 @@
 const int Settings::defaultResW = 1024;
 const int Settings::defaultResH = 768;
 const bool Settings::defaultFullScreen = false;
-const bool Settings::defaultVSync = false;
+const bool Settings::defaultVSync = true;
 Settings::Settings()
 {
   try

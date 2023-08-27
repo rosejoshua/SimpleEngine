@@ -1,13 +1,17 @@
 #include <event_handler.h>
 
-void EventHandler::processEvents(bool *appIsRunning)
+void EventHandler::processEvents(bool *appIsRunning, PlayerControls *player1Controls)
 {
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
-    if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
+    if (event.type == SDL_KEYDOWN)
     {
-      std::cout << "controls event" << std::endl;
+      player1Controls->setKbdState(event.key.keysym.scancode, true);
+    }
+    else if (event.type == SDL_KEYUP)
+    {
+      player1Controls->setKbdState(event.key.keysym.scancode, false);
     }
     else if (event.type == SDL_QUIT)
     {
@@ -16,41 +20,4 @@ void EventHandler::processEvents(bool *appIsRunning)
     }
   }
 }
-  // if (event.type == SDL_KEYDOWN)
-  // {
-  //     if (event.key.keysym.scancode == SDL_SCANCODE_UP)
-  //     {
-  //     upArrowDown = true;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-  //     {
-  //     leftArrowDown = true;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
-  //     {
-  //     downArrowDown = true;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-  //     {
-  //     rightArrowDown = true;
-  //     }
-  // }
-  // else if (event.type == SDL_KEYUP)
-  // {
-  //     if (event.key.keysym.scancode == SDL_SCANCODE_UP)
-  //     {
-  //     upArrowDown = false;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-  //     {
-  //     leftArrowDown = false;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
-  //     {
-  //     downArrowDown = false;
-  //     }
-  //     else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-  //     {
-  //     rightArrowDown = false;
-  //     }
-  // }
+  

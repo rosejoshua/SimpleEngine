@@ -2,32 +2,32 @@
 
 Renderer::Renderer()
 {
-  this->sdlRenderer = nullptr;
+  pSdlRenderer = nullptr;
 }
 
 Renderer::~Renderer()
 {
-  SDL_DestroyRenderer(sdlRenderer);
+  SDL_DestroyRenderer(pSdlRenderer);
 }
 
 bool Renderer::init(Settings *settings, SDL_Window* sdlWindow)
 {
   if (settings->getVSync())
   {
-    sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    pSdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   }
   else
   {
-    sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED );
+    pSdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED );
   }
 
-  return !(sdlRenderer == nullptr);
+  return !(pSdlRenderer == nullptr);
 }
 
 void Renderer::clear()
 {
-  SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderClear(sdlRenderer);
+  SDL_SetRenderDrawColor(pSdlRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderClear(pSdlRenderer);
 }
 
-SDL_Renderer* Renderer::getSdlRendererPtr(){ return sdlRenderer; }
+SDL_Renderer* Renderer::getSdlRendererPtr(){ return pSdlRenderer; }
